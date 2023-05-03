@@ -1,0 +1,3 @@
+class UnsupportedGeometry(Exception):
+
+    pass
