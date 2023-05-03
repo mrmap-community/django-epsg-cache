@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from django.contrib.gis.gdal.geometries import MultiPolygon as GdalMultiPolygon
 from django.contrib.gis.gdal.geometries import Point as GdalPoint
 from django.contrib.gis.gdal.geometries import Polygon as GdalPolygon
@@ -56,7 +58,7 @@ def get_epsg_srid(srs_name):
     return authority, srid
 
 
-def _switch_coords(coords):
+def _switch_coords(coords) -> List[Tuple]:
     _coords = []
     for _polygon in coords:
         for coord in _polygon:
@@ -64,27 +66,34 @@ def _switch_coords(coords):
     return _coords
 
 
+def _polygon_to_linear_ring(polygon) -> str:
+    return ",".join(f"{point[0]} {point[1]}" for point in polygon)
+
+
 def switch_axis_order(geometry):
     if isinstance(geometry, (Polygon, GdalPolygon)):
         coords = _switch_coords(geometry.coords)
-        wkt = "SRID=%s;POLYGON(%s)" % (
-            geometry.srid if geometry.srid else geometry.srs, tuple(coords))
+        wkt = "SRID=%s;POLYGON((%s))" % (
+            geometry.srid if geometry.srid else geometry.srs, _polygon_to_linear_ring(coords))
     elif isinstance(geometry, (MultiPolygon, GdalMultiPolygon)):
         polygons = []
         for _polygon in geometry.coords:
             coords = _switch_coords(_polygon.coords)
-            polygons.append(((tuple(coords)), geometry.srid))
-            wkt = "SRID=%s;MULTIPOLYGON(%s)" % (
-                geometry.srid if geometry.srid else geometry.srs, tuple(polygons))
+            polygons.append(_polygon_to_linear_ring(coords))
+        wkt = "SRID=%s;MULTIPOLYGON((%s))" % (
+            geometry.srid if geometry.srid else geometry.srs, ",".join(polygons))
     elif isinstance(geometry, (Point, GdalPoint)):
-        wkt = "SRID=%s;POINT(%s)" % (geometry.srid if geometry.srid else geometry.srs, tuple(
-            geometry.y, geometry.x, geometry.z, geometry.srid))
+        wkt = "SRID=%s;POINT(%s)" % (geometry.srid if geometry.srid else geometry.srs,
+                                     " ".join([geometry.y, geometry.x, geometry.z]))
     else:
         raise UnsupportedGeometry(
             "unsupported geometry type %s", type(geometry))
-    print(wkt)
 
-    return geometry.__class__(wkt)
+    if isinstance(geometry, (GdalMultiPolygon, GdalPolygon, GdalPoint)):
+        srid, _wkt_instance = wkt.split(";")
+        return geometry.__class__(_wkt_instance, srid.split("=")[1])
+    else:
+        return geometry.__class__.from_ewkt(wkt)
 
 
 def adjust_axis_order(geometry):
