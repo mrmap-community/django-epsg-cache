@@ -54,3 +54,6 @@ class SpatialReference(GdalSpatialReference):
     def is_xy_order(self) -> bool:
         """Return True if the axis order is lon,lat | east, north"""
         return not self.is_yx_order
+
+    def __eq__(self, other: object) -> bool:
+        return self.srid == other.srid and self.origin == other.origin

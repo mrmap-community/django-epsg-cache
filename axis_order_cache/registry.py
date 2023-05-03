@@ -1,7 +1,10 @@
-from django.core.cache import cache
+from django.core.cache import caches
+from django.utils.connection import ConnectionProxy
 from requests import Request, Session
 
 from axis_order_cache.models import Origin, SpatialReference
+from axis_order_cache.settings import (CACHE_BACKEND, EPSG_API_URL, KEY_PREFIX,
+                                       TTL, TTL_FALLBACK)
 
 
 class Registry(object):
@@ -29,14 +32,16 @@ class Registry(object):
        >>> True
     """
 
-    epsg_api_url = "https://apps.epsg.org/api/v1/"
-    cache_prefix = "axis_order_cache"
-    ttl = 7
+    epsg_api_url = EPSG_API_URL
+    cache_prefix = KEY_PREFIX
+    ttl = TTL
+    fallback_ttl = TTL_FALLBACK
+    cache = ConnectionProxy(caches, CACHE_BACKEND)
 
     def __init__(self, proxies=None):
         self.proxies = proxies
 
-    def coord_ref_system_export(self, srid: int):
+    def fetch_coord_ref_system(self, srid: int) -> SpatialReference | None:
         """Fetch the wkt for a given srid from remote epsg api
 
         :return: the spatial reference
@@ -55,7 +60,7 @@ class Registry(object):
             pass
         return None
 
-    def get(self, srid: int):
+    def get(self, srid: int) -> SpatialReference:
         """Return the SpatialReference object by given srid from three different origins.
         1th: cache is uses to lookup a cached spatial reference
         2th: remote epsg api is fetched to lookup the remote spatial reference
@@ -65,9 +70,9 @@ class Registry(object):
         :rtype: :class:`axis_order_cache.models.SpatialReference`
 
         """
-        cached_crs = cache.get(key=f"{self.cache_prefix}-{srid}")
+        cached_crs = self.cache.get(key=f"{self.cache_prefix}-{srid}")
         if not cached_crs:
-            crs = self.coord_ref_system_export(srid=srid)
+            crs = self.fetch_coord_ref_system(srid=srid)
             if crs:
                 self.set(srid=srid, crs=crs)
             else:
@@ -77,6 +82,7 @@ class Registry(object):
         else:
             return SpatialReference(srs_input=cached_crs, srs_type="wkt")
 
-    def set(self, srid: int, crs: SpatialReference):
+    def set(self, srid: int, crs: SpatialReference) -> None:
         """Store the wkt of the given crs"""
-        cache.set(key=f"{self.cache_prefix}-{srid}", value=crs.wkt)
+        self.cache.set(key=f"{self.cache_prefix}-{srid}",
+                       value=crs.wkt, timeout=self.ttl if crs.origin == Origin.EPSG_REGISTRY else self.fallback_ttl)
