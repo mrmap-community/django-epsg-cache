@@ -70,7 +70,8 @@ class Registry(object):
         :rtype: :class:`axis_order_cache.models.SpatialReference`
 
         """
-        cached_crs = self.cache.get(key=f"{self.cache_prefix}-{srid}")
+        cached_crs = self.cache.get(
+            key=f"{self.cache_prefix}-{srid}", version=Origin.EPSG_REGISTRY)
         if not cached_crs:
             crs = self.fetch_coord_ref_system(srid=srid)
             if crs:
@@ -85,4 +86,5 @@ class Registry(object):
     def set(self, srid: int, crs: SpatialReference) -> None:
         """Store the wkt of the given crs"""
         self.cache.set(key=f"{self.cache_prefix}-{srid}",
-                       value=crs.wkt, timeout=self.ttl if crs.origin == Origin.EPSG_REGISTRY else self.fallback_ttl)
+                       value=crs.wkt, timeout=self.ttl if crs.origin == Origin.EPSG_REGISTRY else self.fallback_ttl,
+                       version=Origin.EPSG_REGISTRY)
