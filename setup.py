@@ -42,7 +42,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "django>=3.0,<4.3",
-        "requests>=2.23.0,<2.31.0",
+        "requests>=2.23.0,<2.30.0",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
