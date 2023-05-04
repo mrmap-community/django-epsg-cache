@@ -41,7 +41,8 @@ setup(
         exclude=('tests*',)) if p.startswith(package)],
     include_package_data=True,
     install_requires=[
-        "django>=4.2,<4.3",
+        "django>=3.0,<4.3",
+        "requests>=2.23.0,<2.31.0",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
