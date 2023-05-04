@@ -16,15 +16,5 @@ Install it as any other django app to your project:
 
     $ pip install django-axis-order
 
-Add `axis_order_cache` to `INSTALLED_APSS`:
-
-.. code-block:: python
-
-    INSTALLED_APSS = [
-        # other apps
-        "axis_order_cache"
-    ]
-
-
-.. note::
+.. warning::
     As pre requirement you will need to install the `gdal and geos binaries <https://docs.djangoproject.com/en/4.2/ref/contrib/gis/install/geolibs/>`_ on your system first.
