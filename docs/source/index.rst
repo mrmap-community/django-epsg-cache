@@ -1,5 +1,5 @@
 Welcome to django-axis-order documentation!
-======================================
+===========================================
 
 .. include:: ../../README.rst
 
