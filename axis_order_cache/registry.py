@@ -20,16 +20,15 @@ class Registry(object):
     To get the :class:`axis_order_cache.models.SpatialReference` objects the workflow described in
     :meth:`axis_order_cache.registry.Registry.get`` is used.
 
-    **Example usage:**
+    :Example:
 
-    .. code-block:: python
-       from axis_order_cache import Registry
+    >>> from axis_order_cache import Registry
 
-       registry = Registry()
-       sr = registry.get(srid=4326)
+    >>> registry = Registry()
+    >>> sr = registry.get(srid=4326)
 
-       print(sr.is_xy_order())
-       >>> True
+    >>> print(sr.is_xy_order())
+    >>> True
     """
 
     epsg_api_url = EPSG_API_URL
