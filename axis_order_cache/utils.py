@@ -70,7 +70,7 @@ def _polygon_to_linear_ring(polygon) -> str:
     return "(" + ",".join(f"{point[0]} {point[1]}" for point in polygon) + ")"
 
 
-def switch_axis_order(geometry: (Polygon | GdalPolygon | MultiPolygon | GdalMultiPolygon | Point | GdalPoint)) -> (Polygon | GdalPolygon | MultiPolygon | GdalMultiPolygon | Point | GdalPoint):
+def switch_axis_order(geometry):
     """Switches the coordinate tuples from a given geometry
 
 

@@ -41,7 +41,7 @@ class Registry(object):
     def __init__(self, proxies=None):
         self.proxies = proxies
 
-    def _fetch_coord_ref_system(self, srid: int) -> SpatialReference | None:
+    def _fetch_coord_ref_system(self, srid: int) -> SpatialReference:
         """Fetch the wkt for a given srid from remote epsg api
 
         :return: the spatial reference
