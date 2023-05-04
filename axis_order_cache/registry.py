@@ -41,7 +41,7 @@ class Registry(object):
     def __init__(self, proxies=None):
         self.proxies = proxies
 
-    def fetch_coord_ref_system(self, srid: int) -> SpatialReference | None:
+    def _fetch_coord_ref_system(self, srid: int) -> SpatialReference | None:
         """Fetch the wkt for a given srid from remote epsg api
 
         :return: the spatial reference
@@ -73,7 +73,7 @@ class Registry(object):
         cached_crs = self.cache.get(
             key=f"{self.cache_prefix}-{srid}", version=Origin.EPSG_REGISTRY)
         if not cached_crs:
-            crs = self.fetch_coord_ref_system(srid=srid)
+            crs = self._fetch_coord_ref_system(srid=srid)
             if crs:
                 self.set(srid=srid, crs=crs)
             else:

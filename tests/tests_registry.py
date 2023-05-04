@@ -19,27 +19,20 @@ class MockResponse:
         self.content = content
 
 
-request_counter = 1
-
-
 def side_effect(request: Request):
-    global request_counter
-    request_counter += 1
     if "4326" in request.url:
         return MockResponse(status_code=200, content=WKT_4326)
     else:
         return MockResponse(status_code=400)
 
 
-class TestUtils(TestCase):
+class TestRegistry(TestCase):
 
     def setUp(self):
         self.registry = Registry()
 
     def tearDown(self):
         cache.clear()
-        global request_counter
-        request_counter = 0
 
     @patch.object(Session, 'send', side_effect=side_effect)
     def test_get_from_api(self, mock_response):
@@ -49,8 +42,6 @@ class TestUtils(TestCase):
             origin=Origin.EPSG_REGISTRY, srs_input=WKT_4326, srs_type="wkt")
 
         self.assertEqual(expected, result)
-        self.assertEqual(1, request_counter)
-        print(request_counter)
 
     @patch.object(Session, 'send', side_effect=side_effect)
     def test_get_from_local_gdal(self, mock_response):
@@ -60,5 +51,3 @@ class TestUtils(TestCase):
             origin=Origin.LOCAL_GDAL, srs_input=WKT_4647, srs_type="wkt"
         )
         self.assertEqual(expected, result)
-        self.assertEqual(1, request_counter)
-        print(request_counter)

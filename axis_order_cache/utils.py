@@ -9,7 +9,7 @@ from axis_order_cache.exceptions import UnsupportedGeometry
 from axis_order_cache.registry import Registry
 
 
-def get_epsg_srid(srs_name):
+def get_epsg_srid(srs_name) -> Tuple:
     """Parse a given srs name in different possible formats
 
     WFS 1.1.0 supports (see 9.2, page 36):
@@ -60,31 +60,53 @@ def get_epsg_srid(srs_name):
 
 def _switch_coords(coords) -> List[Tuple]:
     _coords = []
-    for _polygon in coords:
-        for coord in _polygon:
+    for point in coords:
+        for coord in point:
             _coords.append((coord[1], coord[0]))
     return _coords
 
 
 def _polygon_to_linear_ring(polygon) -> str:
-    return ",".join(f"{point[0]} {point[1]}" for point in polygon)
+    return "(" + ",".join(f"{point[0]} {point[1]}" for point in polygon) + ")"
 
 
-def switch_axis_order(geometry):
+def switch_axis_order(geometry: (Polygon | GdalPolygon | MultiPolygon | GdalMultiPolygon | Point | GdalPoint)) -> (Polygon | GdalPolygon | MultiPolygon | GdalMultiPolygon | Point | GdalPoint):
+    """Switches the coordinate tuples from a given geometry
+
+
+    :param geometry: a given geometry with coordinates
+    :return: the new geometry object with switched x,y coords
+
+    :Example:
+
+    >>> from django.contrib.gis.geos import Polygon
+    >>> from axis_order_cache.utils import switch_axis_order
+
+    >>> polygon = Polygon("SRID=4326;POLYGON((0 1,0 50,51 50,50 0,0 1))")
+
+    >>> new_polygon = switch_axis_order(polygon)
+
+    >>> print(new_polygon)
+
+    >>> SRID=4326;POLYGON ((1 0, 50 0, 50 51, 0 50, 1 0))
+
+    """
     if isinstance(geometry, (Polygon, GdalPolygon)):
         coords = _switch_coords(geometry.coords)
-        wkt = "SRID=%s;POLYGON((%s))" % (
+        wkt = "SRID=%s;POLYGON(%s)" % (
             geometry.srid if geometry.srid else geometry.srs, _polygon_to_linear_ring(coords))
     elif isinstance(geometry, (MultiPolygon, GdalMultiPolygon)):
         polygons = []
         for _polygon in geometry.coords:
-            coords = _switch_coords(_polygon.coords)
+            coords = _switch_coords(_polygon)
             polygons.append(_polygon_to_linear_ring(coords))
         wkt = "SRID=%s;MULTIPOLYGON((%s))" % (
-            geometry.srid if geometry.srid else geometry.srs, ",".join(polygons))
+            geometry.srid if geometry.srid else geometry.srs, "),(".join(polygons))
     elif isinstance(geometry, (Point, GdalPoint)):
-        wkt = "SRID=%s;POINT(%s)" % (geometry.srid if geometry.srid else geometry.srs,
-                                     " ".join([geometry.y, geometry.x, geometry.z]))
+        coords = [str(geometry.y), str(geometry.x), str(geometry.z)
+                  ] if geometry.z else [str(geometry.y), str(geometry.x)]
+        wkt = "SRID=%s;POINT(%s)" % (
+            geometry.srid if geometry.srid else geometry.srs, " ".join(coords))
     else:
         raise UnsupportedGeometry(
             "unsupported geometry type %s", type(geometry))
@@ -97,7 +119,12 @@ def switch_axis_order(geometry):
 
 
 def adjust_axis_order(geometry):
-    """switches from y/x axis interpretation to x/y axis interpretation. If the given interpretation is x/y the geometry is returned as it was."""
+    """Switches from y/x axis interpretation to x/y axis interpretation. If the given interpretation is x/y the geometry is returned as it was.
+
+    :param geometry: a given geometry with coordinates
+    :return: the new geometry object with switched x,y coords if it was y/x ordered
+
+    """
     registry = Registry()
     epsg_sr = registry.get(srid=geometry.srid)
     if epsg_sr.is_yx_order:
