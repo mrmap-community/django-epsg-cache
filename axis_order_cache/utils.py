@@ -103,8 +103,9 @@ def switch_axis_order(geometry: (Polygon | GdalPolygon | MultiPolygon | GdalMult
         wkt = "SRID=%s;MULTIPOLYGON((%s))" % (
             geometry.srid if geometry.srid else geometry.srs, "),(".join(polygons))
     elif isinstance(geometry, (Point, GdalPoint)):
-        coords = [str(geometry.y), str(geometry.x), str(geometry.z)
-                  ] if geometry.z else [str(geometry.y), str(geometry.x)]
+        coords = [str(geometry.y), str(geometry.x)]
+        if geometry.z:
+            coords.append(str(geometry.z))
         wkt = "SRID=%s;POINT(%s)" % (
             geometry.srid if geometry.srid else geometry.srs, " ".join(coords))
     else:
