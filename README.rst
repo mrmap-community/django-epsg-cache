@@ -1,3 +1,11 @@
+.. image:: https://readthedocs.org/projects/django-axis-order/badge/?version=latest
+    :target: https://django-axis-order.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
+.. image:: https://badge.fury.io/py/django-axis-order.svg
+    :target: https://pypi.org/project/django-axis-order/
+    :alt: PyPi version
+
 django-axis-order
 =================
 
