@@ -1,12 +1,12 @@
-.. image:: https://readthedocs.org/projects/django-axis-order/badge/?version=latest
-    :target: https://django-axis-order.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/django-epsg-cache/badge/?version=latest
+    :target: https://django-epsg-cache.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://badge.fury.io/py/django-axis-order.svg
-    :target: https://pypi.org/project/django-axis-order/
+.. image:: https://badge.fury.io/py/django-epsg-cache.svg
+    :target: https://pypi.org/project/django-epsg-cache/
     :alt: PyPi version
 
-django-axis-order
+django-epsg-cache
 =================
 
 In geo applications `coordinate tuples <https://wiki.osgeo.org/wiki/Axis_Order_Confusion>`_ can be ordered either (x,y) or (y,x) or (x,y) but meant as (y,x). 
@@ -19,9 +19,9 @@ Install it as any other django app to your project:
 
 .. code-block:: bash
 
-    $ pip install django-axis-order
+    $ pip install django-epsg-cache
 
 .. warning::
     As pre requirement you will need to install the `gdal and geos binaries <https://docs.djangoproject.com/en/4.2/ref/contrib/gis/install/geolibs/>`_ on your system first.
     
-See the `documentation <https://django-axis-order.readthedocs.io/en/latest/index.html>`_ for details.
+See the `documentation <https://django-epsg-cache.readthedocs.io/en/latest/index.html>`_ for details.

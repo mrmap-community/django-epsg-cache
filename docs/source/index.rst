@@ -1,4 +1,4 @@
-Welcome to django-axis-order documentation!
+Welcome to django-epsg-cache documentation!
 ===========================================
 
 .. include:: ../../README.rst

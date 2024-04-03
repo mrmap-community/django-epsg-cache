@@ -5,12 +5,12 @@ Extended SpatialReference
 -------------------------
 
 
-.. autoclass:: axis_order_cache.models.Origin
+.. autoclass:: epsg_cache.models.Origin
     :members:
     :undoc-members:
 
 
-.. autoclass:: axis_order_cache.models.SpatialReference
+.. autoclass:: epsg_cache.models.SpatialReference
     :members:
     :undoc-members:
 
@@ -19,7 +19,7 @@ Cache
 -----
 
 
-.. autoclass:: axis_order_cache.registry.Registry
+.. autoclass:: epsg_cache.registry.Registry
     :members:
     :undoc-members:
 
@@ -29,6 +29,6 @@ Utility functions
 -----------------
 
 
-.. automodule:: axis_order_cache.utils
+.. automodule:: epsg_cache.utils
     :members:
     :undoc-members:

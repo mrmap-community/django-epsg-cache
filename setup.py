@@ -3,10 +3,10 @@ import re
 
 from setuptools import find_namespace_packages, setup
 
-name = 'django-axis-order'
-package = 'axis_order_cache'
-description = 'Small django app to cache reference systems from the epsg registry and provide the correct axis order.'
-url = 'https://github.com/mrmap-community/django-axis-order'
+name = 'django-epsg-cache'
+package = 'epsg_cache'
+description = 'An django app to fetch and cache EPSG Datasets from http://epsg-registry.org'
+url = 'https://github.com/mrmap-community/django-epsg-cache'
 author = 'mrmap-commuity'
 author_email = 'jonas.kiefer@live.com'
 license = 'MIT'
@@ -43,6 +43,7 @@ setup(
     install_requires=[
         "django>=3.2",
         "requests>=2.23.0",
+        "lxml>=5.0.0",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -58,6 +59,7 @@ setup(
         "Topic :: Software Development :: Libraries",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+        "Scientific/Engineering :: GIS"
     ],
     python_requires='>=3.8',
 )
