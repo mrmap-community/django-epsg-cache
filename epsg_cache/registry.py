@@ -156,7 +156,7 @@ class Registry(object):
             if extent_input:
                 extent = EPSGExtent(
                     extent_id=extent_id,
-                    geom_input=extent_input)
+                    geo_input=extent_input)
             else:
                 extent = self.get_extent(srid=srid)
 
