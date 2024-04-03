@@ -5,8 +5,8 @@ from django.contrib.gis.gdal.geometries import Point as GdalPoint
 from django.contrib.gis.gdal.geometries import Polygon as GdalPolygon
 from django.contrib.gis.geos import MultiPolygon, Point, Polygon
 
-from axis_order_cache.exceptions import UnsupportedGeometry
-from axis_order_cache.registry import Registry
+from epsg_cache.exceptions import UnsupportedGeometry
+from epsg_cache.registry import Registry
 
 
 def get_epsg_srid(srs_name) -> Tuple:
@@ -80,7 +80,7 @@ def switch_axis_order(geometry):
     :Example:
 
     >>> from django.contrib.gis.geos import Polygon
-    >>> from axis_order_cache.utils import switch_axis_order
+    >>> from epsg_cache.utils import switch_axis_order
 
     >>> polygon = Polygon("SRID=4326;POLYGON((0 1,0 50,51 50,50 0,0 1))")
 

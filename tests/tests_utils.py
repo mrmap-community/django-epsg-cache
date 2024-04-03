@@ -4,7 +4,7 @@ from django.contrib.gis.gdal.geometries import Polygon as GdalPolygon
 from django.contrib.gis.geos import MultiPolygon, Point, Polygon
 from django.test import TestCase
 
-from axis_order_cache.utils import switch_axis_order
+from epsg_cache.utils import switch_axis_order
 
 
 class TestUtils(TestCase):

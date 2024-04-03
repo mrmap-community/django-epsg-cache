@@ -9,7 +9,7 @@ import django
 
 sys.path.insert(0, os.path.abspath("../.."))
 
-import axis_order_cache  # noqa
+import epsg_cache  # noqa
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
 django.setup()
@@ -25,9 +25,9 @@ def get_version(package):
                      init_py, re.MULTILINE).group(1)
 
 
-VERSION = get_version("axis_order_cache")
+VERSION = get_version("epsg_cache")
 
-project = 'django-axis-order'
+project = 'django-epsg-cache'
 copyright = '2023, MrMap community'
 author = 'MrMap community'
 

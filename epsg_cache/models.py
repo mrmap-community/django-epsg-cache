@@ -3,6 +3,7 @@ from ctypes import c_void_p
 from django.contrib.gis.gdal import SpatialReference as GdalSpatialReference
 from django.contrib.gis.gdal.libgdal import lgdal
 from django.contrib.gis.gdal.prototypes.generation import int_output
+from django.contrib.gis.geos import GEOSGeometry
 
 # see c++ api ref: https://gdal.org/api/ogrspatialref.html
 get_epsg_treats_as_lat_long = int_output(
@@ -18,6 +19,17 @@ class Origin(enumerate):
     EPSG_REGISTRY = "from_remote_registry"
 
 
+class EPSGExtent(GEOSGeometry):
+    extent_id: int = None
+
+    def __init__(self, extent_id, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.extent_id = extent_id
+
+    def __eq__(self, other: object):
+        return super().__eq__(other) and self.extent_id == other.extent_id
+
+
 class SpatialReference(GdalSpatialReference):
     """Class to extend the :class:`django.contrib.gis.gdal.SpatialReference` class by additional attributes and
     properties.
@@ -26,14 +38,16 @@ class SpatialReference(GdalSpatialReference):
     axis order interpretation. See https://wiki.osgeo.org/wiki/Axis_Order_Confusion for detail problem.
 
     :param origin: the origin of this ``SpatialReference`` instance. Used in
-                   :class:`axis_order_cache.registry.Registry` to signal where the information for this instance
+                   :class:`epsg_cache.registry.Registry` to signal where the information for this instance
                    comes from.
     :type origin: :class:`~Origin`
     """
+    _extent: EPSGExtent = None
 
-    def __init__(self, origin: Origin = Origin.CACHE, *args, **kwargs):
+    def __init__(self, origin: Origin = Origin.CACHE, extent: EPSGExtent = None, *args, **kwargs):
         """Custom init function to store origin."""
         self.origin = origin
+        self._extent = extent
         super().__init__(*args, **kwargs)
 
     def __epsg_treats_as_lat_long(self):
@@ -57,3 +71,11 @@ class SpatialReference(GdalSpatialReference):
 
     def __eq__(self, other: object) -> bool:
         return self.srid == other.srid and self.origin == other.origin
+
+    @property
+    def extent(self) -> EPSGExtent:
+        return self._extent
+
+    @extent.setter
+    def extent(self, geom: EPSGExtent):
+        self._extent = geom

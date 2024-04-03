@@ -4,7 +4,7 @@
 Tutorial
 ========
 
-In this tutorial you will learn about how to use the `django-axis-order` package which implements a local cache of the `epsg registry <https://epsg.org/API_UsersGuide.html>`_ with fallback to gdal.
+In this tutorial you will learn about how to use the `django-epsg-cache` package which implements a local cache of the `epsg registry <https://epsg.org/API_UsersGuide.html>`_ with fallback to gdal.
 
 
 Usage with ogc service
@@ -19,7 +19,7 @@ That is the main problem we gona fix here. We fetch the wkt description from the
 
 .. code-block:: python
 
-    from axis_order_cache.utils import adjust_axis_order
+    from epsg_cache.utils import adjust_axis_order
 
     correct_geometry = adjust_axis_order(geometry)
 
