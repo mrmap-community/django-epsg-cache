@@ -58,8 +58,7 @@ setup(
         "Framework :: Django",
         "Topic :: Software Development :: Libraries",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        "Scientific/Engineering :: GIS"
+        "Operating System :: OS Independent"
     ],
     python_requires='>=3.8',
 )
